@@ -17,7 +17,7 @@ export var angle_of_freedom = 80
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	$Tween.connect("tween_all_completed", self, "_on_tween_all_completed")
 
 
 func _physics_process(delta):
@@ -34,6 +34,11 @@ func _input(event):
 		var camera_rot = $UpperCollider/Camera.rotation_degrees
 		camera_rot.x = clamp(camera_rot.x, 90 + angle_of_freedom * -1, 90 + angle_of_freedom)
 		$UpperCollider/Camera.rotation_degrees = camera_rot
+
+
+var inbetween = false
+func _on_tween_all_completed():
+	inbetween = false
 
 
 var state = State.FALL
@@ -60,11 +65,13 @@ func _process_input(delta):
 		$Tween.interpolate_property($LowerCollider, "translation", 
 				Vector3(0, -.25, 0), Vector3(0,.25, 0), .1, Tween.TRANS_LINEAR)
 		$Tween.start()
+		inbetween = true
 	if Input.is_action_just_released("crouch"):
 		crouching = false
 		$Tween.interpolate_property($LowerCollider, "translation", 
 				Vector3(0, .25, 0), Vector3(0, -.25, 0), .1, Tween.TRANS_LINEAR)
 		$Tween.start()
+		inbetween = true
 	
 	# WASD
 	input_dir = Vector3(Input.get_action_strength("right") - Input.get_action_strength("left"), 
@@ -118,12 +125,13 @@ func _process_movement(delta):
 			if Vector2(velocity.x, velocity.z).length() > move_speed:
 				velocity = input_dir.rotated(Vector3(0, 1, 0), rotation.y) * move_speed
 			velocity.y = ((Vector3(velocity.x, 0, velocity.z).dot(collision.normal)) * -1)
-			velocity.y *= 1 + int(velocity.y < 0) * .3
+			velocity.y -= 1 + (1+int(velocity.y < 0) * .3)
 		else:
 			velocity += input_dir.rotated(Vector3(0, 1, 0), rotation.y) * acceleration
 			if Vector2(velocity.x, velocity.z).length() > move_speed/2:
 				velocity = input_dir.rotated(Vector3(0, 1, 0), rotation.y) 
 			velocity.y = ((Vector3(velocity.x, 0, velocity.z).dot(collision.normal)) * -1)
+			velocity.y -= 1 + (1+int(velocity.y < 0) * .3)
 			
 
 	#idle state
@@ -131,7 +139,6 @@ func _process_movement(delta):
 		frames += 1 * delta * 60
 	elif state == State.IDLE:
 		print("idle")
-		print(collision.normal.x, collision.normal.y, collision.normal.z)
 		if velocity.length() > .5:
 			velocity /= friction
 			velocity.y = ((Vector3(velocity.x, 0, velocity.z).dot(collision.normal)) * -1) - .0001
@@ -157,7 +164,7 @@ func _process_movement(delta):
 		rotation_buf = rotation
 			
 	#apply
-	if velocity.length() >= .5:
+	if velocity.length() >= .5 || inbetween:
 		collision = move_and_collide(velocity * delta)
 	if collision:
 		if Vector3.UP.dot(collision.normal) < .5:
