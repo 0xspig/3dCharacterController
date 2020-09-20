@@ -9,7 +9,7 @@ const HOP_FRAMES = 3
 export var mouse_y_sens = .1
 export var mouse_x_sens = .1
 export var move_speed = 10
-export var acceleration = 1
+export var acceleration = .5
 export var gravity = -10
 export var friction = 1.15
 export var max_climb_angle = .6
@@ -152,20 +152,23 @@ func _process_movement(delta):
 		if input_dir.x < -.1 && rotation_d.y > 0:
 			velocity = velocity.rotated(Vector3.UP, rotation_d.y ) 
 		
-		if abs(input_dir.x) < .1:
+		if abs(input_dir.x) < .1 && on_floor:
 			#z axis movement
 			var movement_vector = Vector3(0,0,input_dir.z).rotated(Vector3(0, 1, 0), rotation.y) * move_speed /2
 			if movement_vector.length() < .1:
 				velocity = velocity
-			else:
-				velocity.x = movement_vector.x
-				velocity.z = movement_vector.z
+			elif Vector2(velocity.x, velocity.z).length() < move_speed:
+				var xy = Vector2(movement_vector.x , movement_vector.z).normalized()
+				velocity += Vector3(xy.x, 0, xy.y) * acceleration
+				
 			
 		rotation_buf = rotation
 			
 	#apply
 	if velocity.length() >= .5 || inbetween:
 		collision = move_and_collide(velocity * delta)
+	else:
+		velocity = Vector3(0, velocity.y, 0)
 	if collision:
 		if Vector3.UP.dot(collision.normal) < .5:
 			print("slide")
