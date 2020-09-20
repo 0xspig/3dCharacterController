@@ -9,6 +9,9 @@ default_env.tres
 *.import
 Player.gd
 test.tscn
+test.gd
+tree.tscn
+tree_mat.tres
 *.godot
 # Imported translations (automatically generated from CSV files)
 .translation

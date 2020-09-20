@@ -124,7 +124,7 @@ func _process_movement(delta):
 		else:
 			velocity += input_dir.rotated(Vector3(0, 1, 0), rotation.y) * acceleration
 			if Vector2(velocity.x, velocity.z).length() > move_speed/2:
-				velocity = input_dir.rotated(Vector3(0, 1, 0), rotation.y) 
+				velocity = input_dir.rotated(Vector3(0, 1, 0), rotation.y) * move_speed /2
 			velocity.y = ((Vector3(velocity.x, 0, velocity.z).dot(collision.normal)) * -1)
 			velocity.y -= 1 + (1+int(velocity.y < 0) * .3)
 			
@@ -171,21 +171,16 @@ func _process_movement(delta):
 		else:
 			velocity = velocity
 
-
 func _update_hud():
 	var cursor_object = $UpperCollider/Camera/RayCast.get_collider()
 	if cursor_object == null:
 		$HUD/Crosshair.material.set_shader_param("color_id", 0)
 	elif cursor_object.is_in_group("enemy"):
-		print("enemy")
 		$HUD/Crosshair.material.set_shader_param("color_id", 1)
 	elif cursor_object.is_in_group("friend"):
-		print("friend")
 		$HUD/Crosshair.material.set_shader_param("color_id", 2)
 	else:
-		print("nutn")
 		$HUD/Crosshair.material.set_shader_param("color_id", 0)
 	
 	$HUD/Crosshair.material.set_shader_param("spread", velocity.length()/4 + 1)
-		
 		
