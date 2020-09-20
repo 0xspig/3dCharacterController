@@ -177,13 +177,10 @@ func _update_hud():
 	if cursor_object == null:
 		$HUD/Crosshair.material.set_shader_param("color_id", 0)
 	elif cursor_object.is_in_group("enemy"):
-		print("enemy")
 		$HUD/Crosshair.material.set_shader_param("color_id", 1)
 	elif cursor_object.is_in_group("friend"):
-		print("friend")
 		$HUD/Crosshair.material.set_shader_param("color_id", 2)
 	else:
-		print("nutn")
 		$HUD/Crosshair.material.set_shader_param("color_id", 0)
 	
 	$HUD/Crosshair.material.set_shader_param("spread", velocity.length()/4 + 1)
