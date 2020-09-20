@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[ext_resource path="res://crosshair.shader" type="Shader" id=1]
+
+[resource]
+shader = ExtResource( 1 )
+shader_param/center_enabled = true
+shader_param/inverted = false
+shader_param/color_id = 0
+shader_param/color_0 = Plane( 0, 1, 0, 1 )
+shader_param/color_1 = Plane( 1, 0, 0, 1 )
+shader_param/color_2 = Plane( 0, 1, 1, 1 )
+shader_param/width = 0.002
+shader_param/len = 0.02
+shader_param/spacing = 0.01
+shader_param/spread = 1.0

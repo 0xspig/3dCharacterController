@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://3dCC.gd" type="Script" id=1]
+[ext_resource path="res://crosshair_material.tres" type="Material" id=2]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.5
@@ -16,8 +17,27 @@ shape = SubResource( 1 )
 [node name="Camera" type="Camera" parent="UpperCollider"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -1.09278e-08, 0.25 )
 
+[node name="RayCast" type="RayCast" parent="UpperCollider/Camera"]
+enabled = true
+cast_to = Vector3( 0, 0, -500 )
+
 [node name="LowerCollider" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.25, 0 )
 shape = SubResource( 1 )
 
 [node name="Tween" type="Tween" parent="."]
+
+[node name="HUD" type="Control" parent="."]
+margin_right = 1024.0
+margin_bottom = 600.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Crosshair" type="ColorRect" parent="HUD"]
+material = ExtResource( 2 )
+margin_right = 1024.0
+margin_bottom = 600.0
+__meta__ = {
+"_edit_use_anchors_": false
+}

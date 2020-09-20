@@ -23,6 +23,7 @@ func _ready():
 func _physics_process(delta):
 	_process_input(delta)
 	_process_movement(delta)
+	_update_hud()
 
 
 # Handles mouse movement
@@ -85,7 +86,6 @@ var rotation_buf = rotation  # used to calculate rotation delta for air strafing
 func _process_movement(delta):
 	# state management
 	if !collision:
-		print("air")
 		on_floor = false
 		if state != State.JUMP:
 			state = State.FALL
@@ -93,7 +93,6 @@ func _process_movement(delta):
 		if state == State.JUMP:
 			pass
 		elif Vector3.UP.dot(collision.normal) < max_climb_angle:
-			print("slope")
 			state = State.FALL
 		else:
 			on_floor = true
@@ -104,22 +103,18 @@ func _process_movement(delta):
 
 	#jump state
 	if state == State.JUMP && frames < JUMP_FRAMES:
-		print(frames)
 		velocity.y = JUMP_SPEED
 		frames += 1 * delta * 60
 	elif state == State.JUMP:
-		print("JUMP")
 		state = State.FALL
 
 	#fall state
 	if state == State.FALL:
-		print("fall")
 		if velocity.y > gravity:
 			velocity.y += gravity * delta * 4
 	
 	#run state
 	if state == State.RUN:
-		print("run")
 		if !crouching:
 			velocity += input_dir.rotated(Vector3(0, 1, 0), rotation.y) * acceleration
 			if Vector2(velocity.x, velocity.z).length() > move_speed:
@@ -138,7 +133,6 @@ func _process_movement(delta):
 	if state == State.IDLE && frames < HOP_FRAMES + JUMP_FRAMES:
 		frames += 1 * delta * 60
 	elif state == State.IDLE:
-		print("idle")
 		if velocity.length() > .5:
 			velocity /= friction
 			velocity.y = ((Vector3(velocity.x, 0, velocity.z).dot(collision.normal)) * -1) - .0001
@@ -171,9 +165,27 @@ func _process_movement(delta):
 		velocity = Vector3(0, velocity.y, 0)
 	if collision:
 		if Vector3.UP.dot(collision.normal) < .5:
-			print("slide")
 			velocity.y = gravity
 			velocity = velocity.slide(collision.normal)
 
 		else:
 			velocity = velocity
+
+
+func _update_hud():
+	var cursor_object = $UpperCollider/Camera/RayCast.get_collider()
+	if cursor_object == null:
+		$HUD/Crosshair.material.set_shader_param("color_id", 0)
+	elif cursor_object.is_in_group("enemy"):
+		print("enemy")
+		$HUD/Crosshair.material.set_shader_param("color_id", 1)
+	elif cursor_object.is_in_group("friend"):
+		print("friend")
+		$HUD/Crosshair.material.set_shader_param("color_id", 2)
+	else:
+		print("nutn")
+		$HUD/Crosshair.material.set_shader_param("color_id", 0)
+	
+	$HUD/Crosshair.material.set_shader_param("spread", velocity.length()/4 + 1)
+		
+		
