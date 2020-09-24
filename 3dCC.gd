@@ -77,7 +77,7 @@ func _process_input(delta):
 	# WASD
 	input_dir = Vector3(Input.get_action_strength("right") - Input.get_action_strength("left"), 
 			0,
-			Input.get_action_strength("back") - Input.get_action_strength("forward"))
+			Input.get_action_strength("back") - Input.get_action_strength("forward")).normalized()
 
 
 var collision : KinematicCollision  # Stores the collision from move_and_collide
@@ -118,13 +118,13 @@ func _process_movement(delta):
 		if !crouching:
 			velocity += input_dir.rotated(Vector3(0, 1, 0), rotation.y) * acceleration
 			if Vector2(velocity.x, velocity.z).length() > move_speed:
-				velocity = input_dir.rotated(Vector3(0, 1, 0), rotation.y) * move_speed
+				velocity = velocity.normalized() * move_speed
 			velocity.y = ((Vector3(velocity.x, 0, velocity.z).dot(collision.normal)) * -1)
 			velocity.y -= 1 + (1+int(velocity.y < 0) * .3)
 		else:
 			velocity += input_dir.rotated(Vector3(0, 1, 0), rotation.y) * acceleration
 			if Vector2(velocity.x, velocity.z).length() > move_speed/2:
-				velocity = input_dir.rotated(Vector3(0, 1, 0), rotation.y) * move_speed/2
+				velocity = velocity.normalized() * move_speed/2
 			velocity.y = ((Vector3(velocity.x, 0, velocity.z).dot(collision.normal)) * -1)
 			velocity.y -= 1 + (1+int(velocity.y < 0) * .3)
 			
@@ -165,9 +165,9 @@ func _process_movement(delta):
 		velocity = Vector3(0, velocity.y, 0)
 	if collision:
 		if Vector3.UP.dot(collision.normal) < .5:
-			velocity.y = gravity
+			velocity.y += delta * gravity
+			clamp(velocity.y, gravity, 9999)
 			velocity = velocity.slide(collision.normal)
-
 		else:
 			velocity = velocity
 
