@@ -130,7 +130,11 @@ func _process_movement(delta):
 		if Vector2(velocity.x, velocity.z).length() > (move_speed/2 if crouching else move_speed):
 			velocity = velocity.normalized() * (move_speed/2 if crouching else move_speed)
 		velocity.y = ((Vector3(velocity.x, 0, velocity.z).dot(collision.normal)) * -1)
-		velocity.y -= 1 + (1+int(velocity.y < 0) * .3)
+		
+		# fake gravity to keep character on the ground
+		# increase if player is falling down slopes instead of running
+		velocity.y -= .0001 + (int(velocity.y < 0) * 1.1)  
+		
 
 	#idle state
 	if state == State.IDLE && frames < HOP_FRAMES + JUMP_FRAMES:
