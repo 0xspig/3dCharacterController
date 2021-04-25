@@ -1,5 +1,6 @@
 *.ase
 *.aseprite
+*.ttf
 
 # Godot-specific ignores
 .import

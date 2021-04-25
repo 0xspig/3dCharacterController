@@ -19,6 +19,7 @@ export var max_boost_multiplier = 2
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	$Tween.connect("tween_all_completed", self, "_on_tween_all_completed")
 
 
