@@ -1,3 +1,8 @@
+# UPDATE MARCH 2024
+Godot 4 now has an old school physics feature by default which makes this project more or less obsolete.
+That as well as the fact it has been broken in the lastet Godot version for a couple years has compelled me to archive it.
+Thanks for all the nice comments. Hope everyone who used it had fun and made some cool stuff.
+
 # Old Style FPS Controller
 Godot 3D Character Controller with BHops, air strafing, and old style "broken" kinematic movement.
 
